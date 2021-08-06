@@ -1,8 +1,8 @@
 import requests
 
-from .core.login import login
-from .core.utils import make_routes
-from .core.access.virtual import get_virtual_server_list
+from tew652brp.core.login import login
+from tew652brp.core.utils import make_routes
+from tew652brp.core.access.virtual import get_virtual_server_list
 
 
 class Client:
