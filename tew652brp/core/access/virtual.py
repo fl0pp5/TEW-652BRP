@@ -1,5 +1,14 @@
 import xml.etree.ElementTree as ET
 
+_nodes = {
+    'name': 'vsRule_VirtualServerName_',
+    'internal_ip': 'vsRule_InternalIPAddr_',
+    'enabled': 'vsRule_Enable_',
+    'protocol': 'vsRule_Protocol_',
+    'public_port': 'vsRule_PublicPort_',
+    'private_port': 'vsRule_PrivatePort_',
+}
+
 
 class VServerInfo:
     __slots__ = ('name', 'internal_ip', 'enabled', 'protocol', 'public_port', 'private_port')
@@ -31,16 +40,13 @@ class Parser:
         'private_port': 'vsRule_PrivatePort_',
     }
 
-    keys = nodes.keys()
-    values = nodes.values()
 
-    @staticmethod
-    def find_all_virtual_servers(xml):
-        return ET.fromstring(xml).findall('IGD_WANDevice_i_VirServRule_i_')
+def _find_all_virtual_servers(xml):
+    return ET.fromstring(xml).findall('IGD_WANDevice_i_VirServRule_i_')
 
-    @staticmethod
-    def extract(xml):
-        return VServerInfo(**{key: xml.find(node).text for key, node in zip(Parser.keys, Parser.values)})
+
+def _extract(xml):
+    return VServerInfo(**{key: xml.find(node).text for key, node in zip(_nodes.keys(), _nodes.values())})
 
 
 def _get_servers(session, url):
@@ -55,6 +61,5 @@ def _get_servers(session, url):
 
 def get_virtual_server_list(session, url):
     xml = _get_servers(session, url)
-    servers = Parser.find_all_virtual_servers(xml)
-    return [Parser.extract(server) for server in servers]
-
+    servers = _find_all_virtual_servers(xml)
+    return [_extract(server) for server in servers]
