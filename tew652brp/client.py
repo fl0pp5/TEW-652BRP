@@ -2,6 +2,7 @@ import requests
 
 from .core.login import login
 from .core.utils import make_routes
+from .core.access.virtual import get_virtual_server_list
 
 
 class Client:
@@ -12,3 +13,6 @@ class Client:
 
     def login(self, username, password):
         return login(self._session, self._urls['login'], username, password)
+
+    def get_virtual_server_list(self):
+        return get_virtual_server_list(self._session, self._urls['get_set'])
