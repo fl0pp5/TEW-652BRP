@@ -29,16 +29,15 @@ class VServerInfo:
                f'public_port: {self.public_port} | ' \
                f'private_port: {self.private_port}'
 
-
-class Parser:
-    nodes = {
-        'name': 'vsRule_VirtualServerName_',
-        'internal_ip': 'vsRule_InternalIPAddr_',
-        'enabled': 'vsRule_Enable_',
-        'protocol': 'vsRule_Protocol_',
-        'public_port': 'vsRule_PublicPort_',
-        'private_port': 'vsRule_PrivatePort_',
-    }
+    def to_dict(self):
+        return {
+            _nodes['name']: self.name,
+            _nodes['internal_ip']: self.internal_ip,
+            _nodes['enabled']: self.enabled,
+            _nodes['protocol']: self.protocol,
+            _nodes['public_port']: self.public_port,
+            _nodes['private_port']: self.private_port,
+        }
 
 
 def _find_all_virtual_servers(xml):
