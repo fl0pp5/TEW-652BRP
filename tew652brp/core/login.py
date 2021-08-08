@@ -1,2 +1,4 @@
 def login(session, url, username, password):
-    return session.post(url, data={'username': username, 'password': password})
+    resp = session.post(url, data={'username': username, 'password': password})
+    return 'status.htm' in resp.text
+
