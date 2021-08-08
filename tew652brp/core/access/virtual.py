@@ -69,3 +69,8 @@ def get_servers_xml(session, url, data):
 @ccp_act(act='set')
 def set_virtual_server_info(session, url, data):
     return session.post(url, data=data)
+
+
+@ccp_act(act='del')
+def delete_virtual_server(session, url, data):
+    return session.post(url, data=data)
