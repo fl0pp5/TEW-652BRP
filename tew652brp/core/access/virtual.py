@@ -23,7 +23,7 @@ class VServerInfo:
         self.private_port = private_port
 
     def to_dict(self):
-        nodes = {k: f'{_nodes[k]}{self.instance.replace(",", ".")}' for k in _nodes.keys()}
+        nodes = {k: f'{_nodes[k]}{self.instance}' for k in _nodes.keys()}
 
         return {
             nodes['name']: self.name,
@@ -41,7 +41,7 @@ def _find_all_virtual_servers(xml):
 
 def _extract(xml):
     info = {key: xml.find(node).text for key, node in zip(_nodes.keys(), _nodes.values())}
-    info['instance'] = xml.get('inst')
+    info['instance'] = xml.get('inst').replace(",", ".")
     return VServerInfo(**info)
 
 
