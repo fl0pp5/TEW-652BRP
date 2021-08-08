@@ -11,9 +11,10 @@ _nodes = {
 
 
 class VServerInfo:
-    __slots__ = ('name', 'internal_ip', 'enabled', 'protocol', 'public_port', 'private_port')
+    __slots__ = ('instance', 'name', 'internal_ip', 'enabled', 'protocol', 'public_port', 'private_port')
 
-    def __init__(self, name, internal_ip, enabled, protocol, public_port, private_port):
+    def __init__(self, instance, name, internal_ip, enabled, protocol, public_port, private_port):
+        self.instance = instance
         self.name = name
         self.internal_ip = internal_ip
         self.enabled = enabled
@@ -21,22 +22,16 @@ class VServerInfo:
         self.public_port = public_port
         self.private_port = private_port
 
-    def __str__(self):
-        return f'name: {self.name} | ' \
-               f'ip: {self.internal_ip} | ' \
-               f'enabled: {self.enabled} | ' \
-               f'protocol: {self.protocol} | ' \
-               f'public_port: {self.public_port} | ' \
-               f'private_port: {self.private_port}'
-
     def to_dict(self):
+        nodes = {k: f'{_nodes[k]}{self.instance.replace(",", ".")}' for k in _nodes.keys()}
+
         return {
-            _nodes['name']: self.name,
-            _nodes['internal_ip']: self.internal_ip,
-            _nodes['enabled']: self.enabled,
-            _nodes['protocol']: self.protocol,
-            _nodes['public_port']: self.public_port,
-            _nodes['private_port']: self.private_port,
+            nodes['name']: self.name,
+            nodes['internal_ip']: self.internal_ip,
+            nodes['enabled']: self.enabled,
+            nodes['protocol']: self.protocol,
+            nodes['public_port']: self.public_port,
+            nodes['private_port']: self.private_port,
         }
 
 
@@ -45,20 +40,32 @@ def _find_all_virtual_servers(xml):
 
 
 def _extract(xml):
-    return VServerInfo(**{key: xml.find(node).text for key, node in zip(_nodes.keys(), _nodes.values())})
+    info = {key: xml.find(node).text for key, node in zip(_nodes.keys(), _nodes.values())}
+    info['instance'] = xml.get('inst')
+    return VServerInfo(**info)
 
 
-def _get_servers(session, url):
-    data = {
-        'ccp_act': 'get',
-        'num_inst': '1',
-        'oid_1': 'IGD_WANDevice_i_VirServRule_i_',
-        'inst_1': '11000',
-    }
+def ccp_act(act, **params):
+    def _ccp_act(func):
+        def wrapper(session, url, data):
+            data['ccp_act'] = act
+            for param in params:
+                data[param] = params[param]
+            return func(session, url, data)
+        return wrapper
+    return _ccp_act
+
+
+def xml_to_v_server_info_list(xml):
+    servers = _find_all_virtual_servers(xml)
+    return [_extract(server) for server in servers]
+
+
+@ccp_act(act='get')
+def get_servers_xml(session, url, data):
     return session.post(url, data=data).text
 
 
-def get_virtual_server_list(session, url):
-    xml = _get_servers(session, url)
-    servers = _find_all_virtual_servers(xml)
-    return [_extract(server) for server in servers]
+@ccp_act(act='set')
+def set_virtual_server_info(session, url, data):
+    return session.post(url, data=data)
