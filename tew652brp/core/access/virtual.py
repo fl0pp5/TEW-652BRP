@@ -56,7 +56,7 @@ def ccp_act(act, **params):
     return _ccp_act
 
 
-def xml_to_v_server_info_list(xml):
+def xml_to_vserver_info_list(xml):
     servers = _find_all_virtual_servers(xml)
     return [_extract(server) for server in servers]
 

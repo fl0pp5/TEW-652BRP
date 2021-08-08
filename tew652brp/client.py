@@ -2,7 +2,7 @@ import requests
 
 from tew652brp.core.login import login
 from tew652brp.core.utils import make_routes
-from tew652brp.core.access.virtual import get_virtual_server_list
+from tew652brp.core.access.virtual import set_virtual_server_info, get_servers_xml, xml_to_vserver_info_list
 
 
 class Client:
@@ -15,4 +15,12 @@ class Client:
         return login(self._session, self._urls['login'], username, password)
 
     def get_virtual_server_list(self):
-        return get_virtual_server_list(self._session, self._urls['get_set'])
+        xml = get_servers_xml(self._session, self._urls['get_set'], {
+            'num_inst': '1',
+            'oid_1': 'IGD_WANDevice_i_VirServRule_i_',
+            'inst_1': '11000',
+        })
+        return xml_to_vserver_info_list(xml)
+
+    def set_virtual_server_info(self, server_info):
+        return set_virtual_server_info(self._session, self._urls['get_set'], server_info.to_dict())
