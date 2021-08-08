@@ -2,7 +2,12 @@ import requests
 
 from tew652brp.core.login import login
 from tew652brp.core.utils import make_routes
-from tew652brp.core.access.virtual import set_virtual_server_info, get_servers_xml, xml_to_vserver_info_list
+from tew652brp.core.access.virtual import (
+    set_virtual_server_info,
+    get_servers_xml,
+    xml_to_vserver_info_list,
+    delete_virtual_server,
+)
 
 
 class Client:
@@ -24,3 +29,12 @@ class Client:
 
     def set_virtual_server_info(self, server_info):
         return set_virtual_server_info(self._session, self._urls['get_set'], server_info.to_dict())
+
+    def delete_virtual_server(self, server_info):
+        return delete_virtual_server(self._session, self._urls['get_set'], {
+            'ccpSubEvent': 'CCP_SUB_VIRTUALSERVER',
+            'nextPage': 'virtual_server.htm',
+            'num_inst': '1',
+            'oid_1': 'IGD_WANDevice_i_VirServRule_i_',
+            'inst_1': server_info.instance,
+        })
