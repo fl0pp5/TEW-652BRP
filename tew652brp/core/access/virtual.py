@@ -1,5 +1,8 @@
 import xml.etree.ElementTree as ET
 
+from tew652brp.core.utils import ccp_act
+
+
 _nodes = {
     'name': 'vsRule_VirtualServerName_',
     'internal_ip': 'vsRule_InternalIPAddr_',
@@ -43,17 +46,6 @@ def _extract(xml):
     info = {key: xml.find(node).text for key, node in zip(_nodes.keys(), _nodes.values())}
     info['instance'] = xml.get('inst').replace(",", ".")
     return VServerInfo(**info)
-
-
-def ccp_act(act, **params):
-    def _ccp_act(func):
-        def wrapper(session, url, data):
-            data['ccp_act'] = act
-            for param in params:
-                data[param] = params[param]
-            return func(session, url, data)
-        return wrapper
-    return _ccp_act
 
 
 def xml_to_vserver_info_list(xml):
