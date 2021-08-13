@@ -12,7 +12,7 @@ requirements = [
 
 setuptools.setup(
     name='tew652brp',
-    version='0.0.2',
+    version='0.0.3',
     author='fl0pp5',
     description='Interface for working with the TEW-652BRP router API ',
     long_description=readme,
