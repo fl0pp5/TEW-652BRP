@@ -27,6 +27,7 @@ class DeleteServerAct(BaseAct):
     def __init__(self, request_method, url, server_info):
         super().__init__(request_method, url)
         self._params = {
+            'ccp_act': 'del',
             'ccpSubEvent': 'CCP_SUB_VIRTUALSERVER',
             'nextPage': 'virtual_server.htm',
             'num_inst': '1',
@@ -39,3 +40,4 @@ class UpdateServerAct(BaseAct):
     def __init__(self, request_method, url, server_info):
         super().__init__(request_method, url)
         self._params = server_info.to_dict()
+        self._params['ccp_act'] = 'set'
