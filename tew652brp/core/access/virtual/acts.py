@@ -1,10 +1,14 @@
 import xml.etree.ElementTree as ET
+from typing import List, Callable
 
 from tew652brp.core.base import BaseAct
 from tew652brp.core.access.virtual.types import VServerInfo
 
 
 class GetServersAct(BaseAct):
+    """
+    Contains setup to get virtual servers list.
+    """
     def __init__(self, request_method, url):
         super().__init__(request_method, url)
         self._params = {
@@ -15,7 +19,10 @@ class GetServersAct(BaseAct):
         }
 
     @staticmethod
-    def xml_to_vservers(xml):
+    def xml_to_vservers(xml: str) -> List[VServerInfo]:
+        """
+        Convert xml to VServerInfo.
+        """
         raw_servers = ET.fromstring(xml).findall('IGD_WANDevice_i_VirServRule_i_')
         return [VServerInfo.from_xml(server) for server in raw_servers]
 
@@ -24,7 +31,10 @@ class GetServersAct(BaseAct):
 
 
 class DeleteServerAct(BaseAct):
-    def __init__(self, request_method, url, server_info):
+    """
+    Contains setup for virtual server deletion
+    """
+    def __init__(self, request_method: Callable, url: str, server_info: VServerInfo):
         super().__init__(request_method, url)
         self._params = {
             'ccp_act': 'del',
@@ -37,6 +47,9 @@ class DeleteServerAct(BaseAct):
 
 
 class UpdateServerAct(BaseAct):
+    """
+    Contains setup for virtual server updating
+    """
     def __init__(self, request_method, url, server_info):
         super().__init__(request_method, url)
         self._params = server_info.to_dict()
