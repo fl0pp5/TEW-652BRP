@@ -2,6 +2,8 @@
 
 #### Python interface for working with the TEW-652BRP router API 
 
+## [Documentation](https://tew-652brp.readthedocs.io/)
+
 ## Installation
 ```bash
 pip install tew652brp
