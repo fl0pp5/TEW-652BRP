@@ -56,7 +56,7 @@ class BaseHandler:
         ...         ... # work with response
         ...         return resp
         ...
-        >>> response = GetConnectedDevicesHandler()
+        >>> handler = GetConnectedDevicesHandler()
     """
     def __init__(self, session: requests.Session, url: str):
         self._session = session
